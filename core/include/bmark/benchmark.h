@@ -3,5 +3,7 @@
 
 #include "bmark/benchmark_api.h"
 #include "bmark/macros.h"
+#include "bmark/types.h"
+#include "bmark/utils.h"
 
 #endif
