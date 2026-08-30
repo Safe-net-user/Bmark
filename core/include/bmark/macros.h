@@ -1,5 +1,6 @@
-#ifndef BENCH_LIBRARY_H
-#define BENCH_LIBRARY_H
+#ifndef BMARK_BENCHMARK_MACROS_H
+#define BMARK_BENCHMARK_MACROS_H
+
 /**
  * @brief NUmber of warm-up batches executed before benchmarking
  *
@@ -52,22 +53,4 @@
 # define LOG(msg) ((void)0)
 #endif
 
-#include <stdbool.h>
-#include <stddef.h>
-
-typedef struct s_bench
-{
-    char        name[64];
-    uint64_t    total_iter;
-    uint64_t    min_ns;
-    uint64_t    max_ns;
-    double      mean_ns;
-    double      median_ns;
-    double      stddev_ns;
-    double      p95_ns;
-    double      p99_ns;
-    uint32_t    batches_run;
-    bool        converged;
-} t_bench;
-
-#endif
+#endif //BMARK_MACROS_H
