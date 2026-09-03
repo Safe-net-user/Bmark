@@ -15,6 +15,7 @@ typedef struct s_bench
 	double      stddev_ns;
 	double      p95_ns;
 	double      p99_ns;
+	double		p999_ns;
 	uint32_t    batches_run;
 	bool        converged;
 } t_bench;
