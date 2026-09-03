@@ -157,9 +157,9 @@ void	bench_print(t_bench *bench)
 	printf("  Min        : %.lu ns\n", bench->min_ns);
 	printf("  Max        : %.lu ns\n", bench->max_ns);
 	printf("  Mean       : %.2f ns\n", bench->mean_ns);
-	printf("  Median     : %.lu ns\n", bench->median_ns);
+	printf("  Median     : %.2f ns\n", bench->median_ns);
 	printf("  Stddev     : %.2f ns\n", bench->stddev_ns);
-	printf("  P95        : %.lu ns\n", bench->p95_ns);
-	printf("  P99        : %.lu ns\n", bench->p99_ns);
-	printf("  P99.9      : %.lu ns\n", bench->p999_ns);
+	printf("  P95        : %.2f ns\n", bench->p95_ns);
+	printf("  P99        : %.2f ns\n", bench->p99_ns);
+	printf("  P99.9      : %.2f ns\n", bench->p999_ns);
 }
