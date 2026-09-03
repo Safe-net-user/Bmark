@@ -2,7 +2,8 @@
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
-#include "microbench.h"
+#include <time.h>
+#include "../include/bmark/benchmark.h"
 
 t_bench	*create_bench(char *name)
 {
@@ -10,7 +11,7 @@ t_bench	*create_bench(char *name)
 
 	if (!name)
 		return (NULL);
-	if (strlen(name) > 64)
+	if (strlen(name) >= 64)
 	{
 		fprintf(stderr, "bmark: create_bench: the identifier name must be less than 64 characters\n");
 		return (NULL);
@@ -21,7 +22,7 @@ t_bench	*create_bench(char *name)
 		fprintf(stderr, "bmark: create_bench: bad allocation");
 		return (NULL);
 	}
-	b->name = name;
+	strcpy(b->name, name);
 	b->total_iter = 0;
 	b->min_ns = 0;
 	b->max_ns = 0;
@@ -30,6 +31,7 @@ t_bench	*create_bench(char *name)
 	b->stddev_ns = 0;
 	b->p95_ns = 0;
 	b->p99_ns = 0;
+	b->p999_ns = 0;
 	b->batches_run = 0;
 	b->converged = 0;
 	return (b);
@@ -55,7 +57,7 @@ static double percentile(uint64_t *samples, size_t n, double percentile)
 	return (double)samples[index];
 }
 
-t_rv	bench_run(bench_t *bench, void (*f)(void))
+t_rv	bench_run(t_bench *bench, void (*f)(void))
 {
 	struct timespec	start;
 	struct timespec	end;
@@ -86,7 +88,7 @@ t_rv	bench_run(bench_t *bench, void (*f)(void))
 			index_batch = 0;
 			batch_count++;
 		}
-		LOG("[bench] warm-up finished")
+		LOG("[bench] warm-up finished");
 	#endif
 	LOG("[bench] benchmark started");
 	all_measures = malloc(sizeof(uint64_t) * (MAX_BATCH * BATCH));
@@ -110,8 +112,10 @@ t_rv	bench_run(bench_t *bench, void (*f)(void))
 		}
 		batch_mean = all_elapsed / BATCH;
 		if (batch_count != 0)
+		{
 			if (fabs(batch_mean - final_batches_mean) / final_batches_mean * 100.0 <= CONVERGENCE_THRESHOLD)
 				valid_batch++;
+		}
 		else
 			valid_batch = 0;
 		batches_mean += batch_mean;
@@ -139,4 +143,21 @@ t_rv	bench_run(bench_t *bench, void (*f)(void))
 	bench->converged = valid_batch == VALID_BATCH;
 	LOG("[bench] benchmark finished");
 	return (B_SUCCESS);
+}
+
+void	bench_print(t_bench *bench)
+{
+	printf("Benchmark: %s\n", bench->name);
+	printf("  Iterations : %lu\n", bench->total_iter);
+	printf("  Batches    : %lu\n", bench->batches_run);
+	printf("  Converged  : %s\n", bench->converged ? "yes" : "no");
+	printf("\n");
+	printf("  Min        : %.2f ns\n", bench->min_ns);
+	printf("  Max        : %.2f ns\n", bench->max_ns);
+	printf("  Mean       : %.2f ns\n", bench->mean_ns);
+	printf("  Median     : %.2f ns\n", bench->median_ns);
+	printf("  Stddev     : %.2f ns\n", bench->stddev_ns);
+	printf("  P95        : %.2f ns\n", bench->p95_ns);
+	printf("  P99        : %.2f ns\n", bench->p99_ns);
+	printf("  P99.9      : %.2f ns\n", bench->p999_ns);
 }
