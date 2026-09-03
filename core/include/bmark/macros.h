@@ -31,8 +31,8 @@
 /**
  * @brief Coefficient of variation threshold used to determine convergence
  *
- * The coefficient of variation (CV) is calculated as the standard
- * deviation divided by the mean execution time.
+ * It is the relative deviation between the current batch
+ * mean and the cumulative mean.
  */
 #ifndef CONVERGENCE_THRESHOLD
 # define CONVERGENCE_THRESHOLD 2

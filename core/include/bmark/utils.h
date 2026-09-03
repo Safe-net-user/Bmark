@@ -1,7 +1,7 @@
 #ifndef BMARK_UTILS_H
 #define BMARK_UTILS_H
 
-#include <stddef.h>
+#include <stdint.h>
 
 static inline void set_min_max(uint64_t elapsed_ns, uint64_t *min, uint64_t *max)
 {
