@@ -76,6 +76,9 @@ t_rv	bench_run(t_bench *bench, void (*f)(void))
 	double			final_batches_mean = 0.0;
 	short			valid_batch = 0;
 
+	double			mesure = 0.0;
+	uint64_t		i = 0;
+
 	#ifdef WARMUP_BATCH
 		LOG("[bench] warm-up started");
 		while (batch_count < WARMUP_BATCH)
@@ -97,7 +100,7 @@ t_rv	bench_run(t_bench *bench, void (*f)(void))
 	batch_count = 0;
 	while (valid_batch < VALID_BATCH && batch_count < MAX_BATCH)	{
 		index_batch = 0;
-		all_elapsed = 0.0;
+		all_elapsed = 0;
 		while (index_batch < BATCH)
 		{
 			clock_gettime(CLOCK_MONOTONIC_RAW, &start);
@@ -128,8 +131,6 @@ t_rv	bench_run(t_bench *bench, void (*f)(void))
 	bench->max_ns = max_ns;
 	bench->mean_ns = final_batches_mean;
 	bench->median_ns = all_measures[total_iter / 2];
-	double mesure = 0.0;
-	uint64_t i = 0;
 	while (i < total_iter)
 	{
 		mesure += (all_measures[i] - final_batches_mean) * (all_measures[i] - final_batches_mean);
@@ -142,6 +143,7 @@ t_rv	bench_run(t_bench *bench, void (*f)(void))
 	bench->batches_run = batch_count;
 	bench->converged = valid_batch == VALID_BATCH;
 	LOG("[bench] benchmark finished");
+	free(all_measures);
 	return (B_SUCCESS);
 }
 
@@ -152,12 +154,12 @@ void	bench_print(t_bench *bench)
 	printf("  Batches    : %lu\n", bench->batches_run);
 	printf("  Converged  : %s\n", bench->converged ? "yes" : "no");
 	printf("\n");
-	printf("  Min        : %.2f ns\n", bench->min_ns);
-	printf("  Max        : %.2f ns\n", bench->max_ns);
+	printf("  Min        : %.lu ns\n", bench->min_ns);
+	printf("  Max        : %.lu ns\n", bench->max_ns);
 	printf("  Mean       : %.2f ns\n", bench->mean_ns);
-	printf("  Median     : %.2f ns\n", bench->median_ns);
+	printf("  Median     : %.lu ns\n", bench->median_ns);
 	printf("  Stddev     : %.2f ns\n", bench->stddev_ns);
-	printf("  P95        : %.2f ns\n", bench->p95_ns);
-	printf("  P99        : %.2f ns\n", bench->p99_ns);
-	printf("  P99.9      : %.2f ns\n", bench->p999_ns);
+	printf("  P95        : %.lu ns\n", bench->p95_ns);
+	printf("  P99        : %.lu ns\n", bench->p99_ns);
+	printf("  P99.9      : %.lu ns\n", bench->p999_ns);
 }
